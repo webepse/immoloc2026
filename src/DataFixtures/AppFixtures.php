@@ -32,7 +32,7 @@ class AppFixtures extends Fixture
                 ->setContent($content)
                 ->setPrice(rand(40,200))
                 ->setRooms(rand(1,5))
-                ->setSlug($slug);
+            ;
 
             $manager->persist($ad);
 
