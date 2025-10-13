@@ -39,8 +39,7 @@ class AnnonceType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => 'Titre',
                 'attr' => [
-                    'placeholder' => 'Ajoute un titre à ton annonce',
-                    'class' => 'form-control'
+                    'placeholder' => 'Ajoute un titre à ton annonce'
                 ]
             ])
             ->add('slug', TextType::class, $this->getConfig('slug', 'Adresse Web (automatique)',[
