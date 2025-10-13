@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Ad;
 use App\Repository\AdRepository;
-use Doctrine\Persistence\ManagerRegistry;
+//use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +12,11 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class AdController extends AbstractController
 {
+    /**
+     * Permet d'afficher les annonces
+     * @param AdRepository $repo
+     * @return Response
+     */
     #[Route('/ads', name: 'ads_index')]
     public function index(AdRepository $repo): Response
     {
@@ -24,59 +29,9 @@ final class AdController extends AbstractController
         ]);
     }
 
-    /*
-        #[Route('/ads/{id}', name: 'ads_show')]
-        public function show(int $id, ManagerRegistry $doctrine): Response
-        {
-            $repo = $doctrine->getRepository(Ad::class);
-            $ad = $repo->find($id);
-
-            return $this->render("ad/show.html.twig",[
-                "ad" => $ad
-            ]);
-        }
-    */
-
-    /*
-        #[Route('/ads/{id}', name: 'ads_show')]
-        public function show(int $id, AdRepository $repo): Response
-        {
-            $ad = $repo->find($id);
-
-            return $this->render("ad/show.html.twig",[
-                "ad" => $ad
-            ]);
-        }
-    */
-
-   /*
-        // symfony Flex
-        #[Route('/ads/{id}', name: 'ads_show')]
-        public function show(Ad $ad): Response
-        {
-            return $this->render("ad/show.html.twig",[
-                "ad" => $ad
-            ]);
-        }
-   */
-
     /**
-     * permet d'afficher la page de l'annonce choisie par l'utilisateur avec son slug
-     * pour faire fonctionner ceci, il faut dans le fichier config/packages/doctrine.yaml (ligne 28) passer controller_resolver:
-     * auto_mapping: true (false par défaut)
-
-            #[Route('/ads/{slug}', name: 'ads_show')]
-            public function show(Ad $ad): Response
-            {
-                return $this->render("ad/show.html.twig",[
-                    "ad" => $ad
-                ]);
-            }
-    */
-
-
-    /**
-     * permet d'afficher la page de l'annonce choisie par l'utilisateur avec son slug
+     * Permet d'afficher la page de l'annonce choisie par l'utilisateur avec son slug
+     * Attention {slug} c'est paramConverter pas lié à Symfony Flex
      * @param Ad $ad
      * @return Response
      */
@@ -86,7 +41,7 @@ final class AdController extends AbstractController
         Ad $ad
     ): Response
     {
-        // dump($ad);
+        //dump($ad);
         return $this->render("ad/show.html.twig",[
             "ad" => $ad
         ]);
