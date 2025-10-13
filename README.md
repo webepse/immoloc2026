@@ -26,3 +26,19 @@
 #### ou
 ```npm run watch```
 
+## cours 2 - installation de bootstrap (à ne pas faire si projet venant de gitHub donc déjà installé)
+```composer require symfony/webpack-encore-bundle```
+
+```npm install``` pour installer les dépendance du package.json
+
+```composer require orm-fixtures --dev``` (--dev pour mettre en dependance DEV)
+
+```composer require cocur/slugify```
+
+```composer require fakerphp/faker```
+
+```npm i bootstrap@5.3.8```
+
+
+
+
