@@ -1,3 +1,48 @@
-body {
-    background-color: skyblue;
+.container{
+    margin-top: 20px;
+}
+
+.starsimg{
+    height: 200px;
+    width: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.annonce-title{
+    padding: 2em;
+    background-size: cover;
+    background-position: center center;
+}
+
+.annonce-title h1, .annonce-title p{
+    color: white;
+    text-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+}
+
+.carousel-item img{
+    height: 400px;
+    object-fit: cover;
+}
+
+.carousel-caption{
+    text-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+}
+
+.full{
+    min-height: 70vh;
+}
+
+.avatar{
+    max-width: 128px;
+    max-height: 128px;
+    border-radius: 50%;
+}
+.avatar-medium{
+    max-width: 64px;
+    max-height: 64px;
+}
+.avatar-mini{
+    max-width: 24px;
+    max-height: 24px;
 }
