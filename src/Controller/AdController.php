@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ad;
+use App\Form\AnnonceType;
 use App\Repository\AdRepository;
 //use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -33,14 +34,7 @@ final class AdController extends AbstractController
     public function create(): Response
     {
         $ad = new Ad();
-        $form = $this->createFormBuilder($ad)
-            ->add('title')
-            ->add('introduction')
-            ->add('content')
-            ->add('coverImage')
-            ->add('rooms')
-            ->add('price')
-            ->getForm();
+        $form = $this->createForm(AnnonceType::class,$ad);
 
 
         return $this->render('ad/new.html.twig',[

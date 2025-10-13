@@ -2,6 +2,8 @@
 
 {% block title %}Création d'une annonce{% endblock %}
 
+{% form_theme myForm _self %}
+
 {% block body %}
     <div class="container">
         {{ form_start(myForm) }}
@@ -10,9 +12,34 @@
                 {{ form_row(myForm.title) }}
             </div>
             #}
-            {{ form_widget(myForm) }}
+        {#<div class="form-group my-4">
+            {{ form_label(myForm.title) }}
+            {{ form_widget(myForm.title) }}
+        </div>#}
+
+        {{ form_widget(myForm) }}
+
+
         <button type="submit" class="btn btn-primary mt-3">Création d'une annonce</button>
 
         {{ form_end(myForm) }}
     </div>
+{% endblock %}
+
+{% block form_row %}
+    {# attention que la ref n'est plus myForm mais form (pour la mise ne page) #}
+    {# dump() #}
+    <div class="form-group my-3">
+        <div class="row">
+            <div class="col-4">{{ form_label(form) }}</div>
+            <div class="col-8">{{ form_widget(form) }}</div>
+            {#<div class="col-8">
+                {{ form_widget(form, {'attr':{'class':'form-control'}}) }}
+            </div>#}
+        </div>
+    </div>
+{% endblock %}
+
+{% block text_widget %}
+    <input type="text" name="{{ full_name }}" id="{{ id }}" class="form-control">
 {% endblock %}
