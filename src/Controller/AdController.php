@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Ad;
+use App\Entity\Image;
 use App\Form\AnnonceType;
 use App\Repository\AdRepository;
 //use Doctrine\Persistence\ManagerRegistry;
@@ -36,17 +37,27 @@ final class AdController extends AbstractController
     public function create(Request $request, EntityManagerInterface $manager): Response
     {
         $ad = new Ad();
+
+        // instanciation de 2 objets Image
+        $image1 = new Image();
+        $image2 = new Image();
+
+        // set les objets Image avec les infos Url et Caption
+        $image1->setUrl("https://picsum.photos/400/200")
+            ->setCaption('Titre 1');
+
+        $image2->setUrl("https://picsum.photos/400/200")
+            ->setCaption('Titre 2');
+
+        // ajout des 2 objets Image à mon objet Ad
+        $ad->addImage($image1);
+        $ad->addImage($image2);
+
         $form = $this->createForm(AnnonceType::class,$ad);
-        // permet de vérifier l'état du formulaire (envoyé ou non par exemple)
         $form->handleRequest($request);
-        //dump($request);
-        // isSubmitted : permet de vérifier si formulaire soumis ou non?
-        // isValid : permet de vérifier si le formulaire est valide ou non
-        //$arrayForm = $request->request->all();
 
         if($form->isSubmitted() && $form->isValid())
         {
-            //dump($arrayForm['annonce']);
             $manager->persist($ad);
             $manager->flush();
             $this->addFlash(
