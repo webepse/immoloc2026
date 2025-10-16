@@ -33,6 +33,19 @@ final class AdController extends AbstractController
         ]);
     }
 
+    #[Route('/ads/{slug}/edit', name:"ads_edit")]
+    public function edit(Request $request, EntityManagerInterface $manager, Ad $ad): Response
+    {
+        $form = $this->createForm(AnnonceType::class, $ad);
+        $form->handleRequest($request);
+
+        return $this->render("ad/edit.html.twig",[
+            'ad' => $ad,
+            'myForm' => $form->createView()
+        ]);
+    }
+
+
     #[Route('/ads/new', name: 'ads_create')]
     public function create(Request $request, EntityManagerInterface $manager): Response
     {
