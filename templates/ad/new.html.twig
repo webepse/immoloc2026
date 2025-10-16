@@ -2,7 +2,7 @@
 
 {% block title %}Création d'une annonce{% endblock %}
 
-{% form_theme myForm _self %}
+{% form_theme myForm 'ad/_collection.html.twig' %}
 
 {% block body %}
     <div class="container full">
@@ -17,83 +17,7 @@
     </div>
 {% endblock %}
 
-{% block _annonce_images_widget %}
-    {# Définition du champ annonce_image, la variable form correspond au champ annonce_image #}
-    <p>Ici, vous pouvez ajouter vos propres images</p>
-    {{ form_widget(form) }}
-    <input type="hidden" id="widgets-counter" value="0">
-    <div class="form-group my-2">
-        <button type="button" id="add-image" class="btn btn-primary">Ajouter une image</button>
-    </div>
-{% endblock %}
-
-{% block _annonce_images_entry_row %}
-    {# entry précise le entry_type dans notre fichier annonceType au niveau de la collection - donc chaque formulaire de ImageType #}
-    {{ form_widget(form) }}
-    {# cela a permis de juste afficher le widget et plus les label__name__ (0,1,2,3,4) #}
-{% endblock %}
-
-{% block _annonce_images_entry_widget %}
-    <div class="form-group my-2" id="block_{{ id }}">
-        <div class="row">
-            <div class="col-10">
-                <div class="row">
-                    <div class="col">
-                        {{ form_widget(form.url) }}
-                        {{ form_errors(form.url) }}
-                    </div>
-                    <div class="col">
-                        {{ form_widget(form.caption) }}
-                        {{ form_errors(form.caption) }}
-                    </div>
-                </div>
-            </div>
-            <div class="col-2">
-                <button type="button" class="btn btn-danger" data-action="delete" data-target="#block_{{ id }}">X</button>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
 {% block javascripts %}
-    <script>
-        const addImage = document.querySelector('#add-image')
-        addImage.addEventListener('click',()=>{
-            // compter combien j'ai de form-group pour les indices ex: annonce_image_0_url
-            const widgetCounter = document.querySelector("#widgets-counter")
-            const index = +widgetCounter.value // le + permet de transformer un string en number -> pcq value return tjrs un string
-            const annonceImages = document.querySelector("#annonce_images")
-            // recup du prototype dans la div (data-prototype)
-            // le drapeau g indique que l'on va le faire plusieurs fois
-            const prototype = annonceImages.dataset.prototype.replace(/__name__/g, index)
-            // injecter le code dans la div
-            annonceImages.insertAdjacentHTML('beforeend', prototype)
-            widgetCounter.value = index+1
-            // ajouter à la liste pour supprimer
-            handleDeleteButtons() // metre à jour le tableau deletes et ajouter l'event
-        })
-
-        const updateCounter = () => {
-            const count = document.querySelectorAll('#annonce_images div.form-group').length
-            document.querySelector('#widgets-counter').value = count
-        }
-
-        const handleDeleteButtons = () => {
-            let deletes = document.querySelectorAll('button[data-action="delete"]')
-            deletes.forEach(button => {
-                button.addEventListener('click',()=>{
-                    const target = button.dataset.target
-                    const elementTarget = document.querySelector(target)
-                    // pour s'assurer que #block_id existe sinon risque d'erreur
-                    if(elementTarget){
-                        elementTarget.remove() // supprimer l'élément
-                    }
-                })
-            })
-        }
-
-        updateCounter()
-        handleDeleteButtons()
-    </script>
+     {{ encore_entry_script_tags('annonce') }}
 {% endblock %}
 
