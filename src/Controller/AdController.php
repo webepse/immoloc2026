@@ -37,27 +37,18 @@ final class AdController extends AbstractController
     public function create(Request $request, EntityManagerInterface $manager): Response
     {
         $ad = new Ad();
-
-        // instanciation de 2 objets Image
-        $image1 = new Image();
-        $image2 = new Image();
-
-        // set les objets Image avec les infos Url et Caption
-        $image1->setUrl("https://picsum.photos/400/200")
-            ->setCaption('Titre 1');
-
-        $image2->setUrl("https://picsum.photos/400/200")
-            ->setCaption('Titre 2');
-
-        // ajout des 2 objets Image à mon objet Ad
-        $ad->addImage($image1);
-        $ad->addImage($image2);
-
         $form = $this->createForm(AnnonceType::class,$ad);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid())
         {
+            // gestion des images
+            foreach($ad->getImages() as $image)
+            {
+                $image->setAd($ad);
+                $manager->persist($image);
+            }
+
             $manager->persist($ad);
             $manager->flush();
             $this->addFlash(
