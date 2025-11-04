@@ -1,0 +1,13 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Inscription au site{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2>Inscription sur Immoloc</h2>
+        {{form_start(myForm)}}
+            {{form_widget(myForm)}}
+            <input type="submit" class="btn btn-success" value="Confirmez l'inscription">
+        {{form_end(myForm)}}
+    </div>
+{% endblock %}

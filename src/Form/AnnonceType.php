@@ -3,37 +3,19 @@
 namespace App\Form;
 
 use App\Entity\Ad;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use App\Form\ApplicationType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
-class AnnonceType extends AbstractType
+class AnnonceType extends ApplicationType
 {
-    /**
-     * Permet de faciliter la création de form (perso pas de symfony)
-     * @param string $label
-     * @param string $placeholder
-     * @param array $options
-     * @return array
-     */
-    private function getConfig(string $label, string $placeholder, array $options = []): array
-    {
-        return array_merge_recursive(
-            [
-                'label' => $label,
-                'attr' => [
-                    'placeholder' => $placeholder
-                ]
-            ], $options
-        );
-    }
-
+    
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

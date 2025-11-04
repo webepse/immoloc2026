@@ -2,17 +2,22 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Cocur\Slugify\Slugify;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields:['email'], message: "Un autre utilisateur possède déjà cette adresse e-mail, merci de la modifier")]
 #[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -22,6 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\Email(message: "Veuillez renseigner une adresse e-mail valide")]
     private ?string $email = null;
 
     /**
@@ -34,21 +40,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le mot de passe ne peut pas être vide")]
+    #[Assert\Length(min: 8, minMessage: "Le mot de passe doit contenir au moins {{ limit }} caractères")]
+    #[Assert\Regex(pattern: '/[A-Z]/', message: "Le mot de passe doit contenir au moins une lettre majuscule")]
+    #[Assert\Regex(pattern: '/[a-z]/', message: "Le mot de passe doit contenir au moins une lettre minuscule")]
+    #[Assert\Regex(pattern: '/\d/', message: "Le mot de passe doit contenir au moins un chiffre")]
+    #[Assert\Regex(pattern: '/[^A-Za-z0-9]/', message: "Le mot de passe doit contenir au moins un caractère spécial")]
     private ?string $password = null;
 
+    #[Assert\EqualTo(propertyPath:"password", message: "Vous n'avez pas correctement confirmé votre mot de passe")]
+    public ?string $passwordConfirm = null;
+
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Vous devez renseigner votre prénom")]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Vous devez renseigner votre nom de famille")]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url(message: "Vous devez renseigner une adresse URL valide")]
     private ?string $picture = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 10, max: 255, minMessage:"Votre introduction doit faire plus de 10 caractères", maxMessage: "Votre introduction ne doit pas dépasser plus de 255 caractères")]
     private ?string $introduction = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Length(min: 10, minMessage:"Votre description doit faire plus de 10 caractères")]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
