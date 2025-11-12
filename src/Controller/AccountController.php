@@ -190,7 +190,7 @@ final class AccountController extends AbstractController
                     'success',
                     "Votre mot de passe à bien été modifié"
                 );
-                return $this->redirectToRoute('homepage');
+                return $this->redirectToRoute('account_index');
             }
         }
 
@@ -247,7 +247,7 @@ final class AccountController extends AbstractController
                 'success',
                 "Votre image de profile a bien été modifiée"
             );
-            return $this->redirectToRoute('homepage');
+            return $this->redirectToRoute('account_index');
         }
 
         return $this->render("account/imgModify.html.twig", [
@@ -278,7 +278,7 @@ final class AccountController extends AbstractController
                 "Votre image de profil a bien été supprimée"
             );
         }
-        return $this->redirectToRoute('homepage');
+        return $this->redirectToRoute('account_index');
     }
 
 }
