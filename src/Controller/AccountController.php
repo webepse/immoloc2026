@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\PasswordUpdate;
 use App\Entity\User;
 use App\Form\AccountType;
+use App\Form\PasswordUpdateType;
 use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,7 +89,10 @@ final class AccountController extends AbstractController
     #[Route("/account/profile", name:"account_profile")]
     public function profile(Request $request, EntityManagerInterface $manager): Response
     {
-        // récup l'utilisateur connecté
+        /**
+         * Récupération de l'utilisateur connecté
+         * @var User $user
+         */
         $user = $this->getUser();
         $form = $this->createForm(AccountType::class, $user);
         $form->handleRequest($request);
@@ -105,6 +110,53 @@ final class AccountController extends AbstractController
         return $this->render("account/profile.html.twig",[
             "myForm" => $form->createView()
         ]);
+    }
+
+    /**
+     * Permet de modifier son mot de passe
+     * @param Request $request
+     * @param UserPasswordHasherInterface $hasher
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
+    #[Route('/account/update-password', name: 'account_password')]
+    public function updatePassword(Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $manager): Response
+    {
+        /**
+         * Récupération de l'utilisateur connecté
+         * @var User $user
+         */
+        $user = $this->getUser();
+        $passwordUpdate = new PasswordUpdate();
+        $form = $this->createForm(PasswordUpdateType::class, $passwordUpdate);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            // vérification si le mot de passe actuel est correct
+            if(!$hasher->isPasswordValid($user, $passwordUpdate->getOldPassword()))
+            {
+                // gestion du message d'erreur
+                //$this->addFlash("error", "Le mot de passe actuel est incorrect");
+                $form->get('oldPassword')->addError(new \Symfony\Component\Form\FormError("Le mot de passe actuel est incorrect"));
+            }else{
+                $newPassword = $passwordUpdate->getNewPassword();
+                $hash = $hasher->hashPassword($user, $newPassword);
+                $user->setPassword($hash);
+                $manager->persist($user);
+                $manager->flush();
+                $this->addFlash(
+                    'success',
+                    "Votre mot de passe à bien été modifié"
+                );
+                return $this->redirectToRoute('homepage');
+            }
+        }
+
+        return $this->render("account/password.html.twig", [
+            "myForm" => $form->createView(),
+        ]);
+
     }
 
 }
