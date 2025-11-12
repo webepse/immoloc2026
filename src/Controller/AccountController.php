@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\PasswordUpdate;
 use App\Entity\User;
+use App\Entity\UserImgModify;
 use App\Form\AccountType;
+use App\Form\ImgModifyType;
 use App\Form\PasswordUpdateType;
 use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -196,6 +198,87 @@ final class AccountController extends AbstractController
             "myForm" => $form->createView(),
         ]);
 
+    }
+
+    /**
+     * Permet de modifier l'image de profil
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Reponse|string
+     */
+    #[Route('/account/img-modify', name: 'account_modifimg')]
+    public function imgModify(Request $request, EntityManagerInterface $manager): Response|string
+    {
+        $imgModify = new UserImgModify();
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        $form = $this->createForm(ImgModifyType::class, $imgModify);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $file = $form['newPicture']->getData();
+            if(!empty($file))
+            {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate("Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()", $originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+
+                try{
+                    $file->move(
+                        $this->getParameter('uploads_directory'),
+                        $newFilename
+                    );
+                    // supprimer l'image dans le dossier
+                    // gèrer en plus le fait que l'image est facultative
+                    if(!empty($user->getPicture())) {
+                        unlink($this->getParameter('uploads_directory') . "/" . $user->getPicture());
+                    }
+                }catch(FileException $e){
+                    return $e->getMessage();
+                }
+                $user->setPicture($newFilename);
+            }
+            $manager->persist($user);
+            $manager->flush();
+            $this->addFlash(
+                'success',
+                "Votre image de profile a bien été modifiée"
+            );
+            return $this->redirectToRoute('homepage');
+        }
+
+        return $this->render("account/imgModify.html.twig", [
+            "myForm" => $form->createView()
+        ]);
+    }
+
+    /**
+     * Permet de supprimer l'image de profil'
+     * @param EntityManagerInterface $manager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    #[Route('/account/remove-img', name: 'account_delimg')]
+    public function removeImg(EntityManagerInterface $manager): Response
+    {
+        /**
+         * @var User $user
+         */
+        $user = $this->getUser();
+        if(!empty($user->getPicture()))
+        {
+            unlink($this->getParameter('uploads_directory') . "/" . $user->getPicture());
+            $user->setPicture(null);
+            $manager->persist($user);
+            $manager->flush();
+            $this->addFlash(
+                'success',
+                "Votre image de profil a bien été supprimée"
+            );
+        }
+        return $this->redirectToRoute('homepage');
     }
 
 }

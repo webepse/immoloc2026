@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulaire de modification de l'image de profil{% endblock %}
+
+{% block body %}
+    <div class="container full">
+        <h1>Modification de l'image de profil</h1>
+        {{ form_start(myForm) }}
+            {{ form_widget(myForm) }}
+            <button type="submit" class="btn btn-warning">Confirmez la modification</button>
+        {{ form_end(myForm) }}
+    </div>
+{% endblock %}
