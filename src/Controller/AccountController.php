@@ -8,6 +8,7 @@ use App\Form\AccountType;
 use App\Form\PasswordUpdateType;
 use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -55,8 +56,15 @@ final class AccountController extends AbstractController
     {}
 
 
+    /**
+     * Permet d'inscrire un utilisateur
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @param UserPasswordHasherInterface $hasher
+     * @return Response|string
+     */
     #[Route("/register", name:"account_register")]
-    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
+    public function register(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response|string
     {
         $user = new User();
         $form = $this->createForm(RegistrationType::class, $user);
@@ -64,6 +72,25 @@ final class AccountController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid())
         {
+            // gestion de l'image de profil
+            $file = $form['picture']->getData();
+            if(!empty($file))
+            {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate("Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()", $originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+
+                try{
+                    $file->move(
+                        $this->getParameter('uploads_directory'),
+                        $newFilename
+                    );
+                }catch(FileException $e){
+                    return $e->getMessage();
+                }
+                $user->setPicture($newFilename);
+            }
+
             $hash = $hasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hash);
             $manager->persist($user);
