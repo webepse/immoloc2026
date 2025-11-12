@@ -9,6 +9,7 @@ use App\Form\PasswordUpdateType;
 use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -121,11 +122,22 @@ final class AccountController extends AbstractController
          * @var User $user
          */
         $user = $this->getUser();
+        // gestion de l'image de profil
+        // pour garder en mémoire le nom de l'image en vue de le remettre après validation du formulaire
+        $fileName = $user->getPicture();
+        // comme on peut laisser le choix à l'utilisateur de ne pas mettre d'image
+        if(!empty($fileName))
+        {
+            // modification de l'objet user pour mettre une image au paramètre $picture
+            $user->setPicture(new File($this->getParameter('uploads_directory')."/".$fileName));
+        }
         $form = $this->createForm(AccountType::class, $user);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid())
         {
+            // remise en place du nom de l'image
+            $user->setPicture($fileName);
             $manager->persist($user);
             $manager->flush();
             $this->addFlash(
