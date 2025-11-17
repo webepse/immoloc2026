@@ -29,6 +29,18 @@ class AppFixtures extends Fixture
         $faker = Factory::create("fr_FR");
         //$slugify = new Slugify();
 
+        $admin = new User();
+        $admin->setFirstName('admin')
+            ->setLastName('admin')
+            ->setPicture("")
+            ->setEmail("admin@myepse.be")
+            ->setIntroduction($faker->sentence())
+            ->setDescription('<p>'.join('</p><p>',$faker->paragraphs(3)).'</p>')
+            ->setPassword($this->passwordHasher->hashPassword($admin,'password'))
+            ->setRoles(['ROLE_ADMIN']);
+        
+        $manager->persist($admin);
+
         // gestion des users
         $users = []; // init d'un tableau pour récup les user pour les associer avec les annonces
         $genres = ['male','femelle'];
@@ -38,9 +50,9 @@ class AppFixtures extends Fixture
             $user = new User();
             $genre = $faker->randomElement($genres);
 
-            $picture = "https://randomuser.me/api/portraits/";
-            $pictureId = $faker->numberBetween(1,99).'.jpg';
-            $picture .= ($genre == 'male' ? 'men/' : 'women/').$pictureId;
+            // $picture = "https://randomuser.me/api/portraits/";
+            // $pictureId = $faker->numberBetween(1,99).'.jpg';
+            // $picture .= ($genre == 'male' ? 'men/' : 'women/').$pictureId;
             // https://randomuser.me/api/portraits/women/23.jpg
 
             // pour le mot de passe, j'ai besoin d'un système pour crypter (hash) -> construct pour UserPasswordHasherInterface
@@ -52,7 +64,7 @@ class AppFixtures extends Fixture
                 ->setIntroduction($faker->sentence())
                 ->setDescription('<p>'.join('</p><p>',$faker->paragraphs(3)).'</p>')
                 ->setPassword($hash)
-                ->setPicture($picture);
+                ->setPicture("");
 
             $manager->persist($user);
             $users[] = $user; // ajouter un user dans le tableau récup des users (pour les annonces)

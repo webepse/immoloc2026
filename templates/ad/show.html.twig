@@ -49,19 +49,28 @@
                 </div>
             </div>
             <div class="col">
+                {% set a = ad.author %}
                 <div class="row">
-                    <div class="col-4 my-3">
-                        <img src="https://picsum.photos/64/64" alt="Avatar de Bruce">
-                    </div>
-                    <div class="col my-3">
-                        <h3>Bruce Wayne</h3>
-                        <button type="button" class="btn btn-primary">
-                            Annonce(s) <span class="badge badge-primary">3</span>
-                        </button>
-                    </div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad, nostrum?</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad, nostrum?</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad, nostrum?</p>
+                   <div class="col-3">
+                    <a href="{{path('user_show', {'slug': a.slug})}}">
+                        {% if a.picture %}
+                            <img src="/uploads/{{a.picture}}" alt="Avatar de {{a.fullName}}" class="avatar avatar-medium">
+                        {% else %}
+                            <img src="https://plus.unsplash.com/premium_photo-1664474619075-644dd191935f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aW1hZ2V8ZW58MHx8MHx8fDA%3D" alt="Avatar par défaut" class="avatar avatar-medium">
+                        {% endif %}
+                    </a>
+                   </div>
+                   <div class="col">
+                      <a href="{{path('user_show', {'slug': a.slug})}}">
+                        <h3>{{a.fullName}}</h3>
+                      </a>
+                      <button type="button" class="btn btn-primary">
+                        Annonce(s) <span class="badge badge-secondary">{{a.ads | length }}</span>
+                      </button>
+                   </div>
+                   <div class="col-12 my-3">
+                    {{ a.description | raw | nl2br }}
+                   </div>
                 </div>
             </div>
         </div>

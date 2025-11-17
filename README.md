@@ -64,16 +64,16 @@ git clone
 Rentrer dans le dossier
 ```cd immoloc2026```
 
-[installer composer si pas encore fait]
+[installer composer si pas encore fait puis:]
 ```composer i```
 
 ### sur FileZilla
 
 * Transfert du fichier .env (avec les données de connexion de o2switch)
 
-* en local faire une ```npm run build```
+* En local faire une ```npm run build```
 
-* envoyer le build dans le dossier public sur le serveur
+* Envoyer le build dans le dossier public sur le serveur
 
 ### pour la base de données en SSH
 
@@ -85,6 +85,8 @@ envoyer les fixtures sur le serveur
 
 ### retour sur FileZilla
 
-modifier le .env pour le mettre en prod
+modifier le __.env__ pour le mettre en prod
 
-### sur o2switch faire une adresse (nom de domaine) ou sous domaine vers /public_html/immoloc26/public/
+### sur o2switch 
+
+faire une adresse (nom de domaine) ou sous domaine vers ```/public_html/immoloc26/public/```
