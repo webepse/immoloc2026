@@ -19,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Exception\TooManyLoginAttemptsAuthenticationException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class AccountController extends AbstractController
 {
@@ -117,6 +118,7 @@ final class AccountController extends AbstractController
      * @return Response
      */
     #[Route("/account/profile", name:"account_profile")]
+    #[IsGranted("ROLE_USER")]
     public function profile(Request $request, EntityManagerInterface $manager): Response
     {
         /**
@@ -161,6 +163,7 @@ final class AccountController extends AbstractController
      * @return Response
      */
     #[Route('/account/update-password', name: 'account_password')]
+    #[IsGranted("ROLE_USER")]
     public function updatePassword(Request $request, UserPasswordHasherInterface $hasher, EntityManagerInterface $manager): Response
     {
         /**
@@ -207,6 +210,7 @@ final class AccountController extends AbstractController
      * @return Reponse|string
      */
     #[Route('/account/img-modify', name: 'account_modifimg')]
+    #[IsGranted("ROLE_USER")]
     public function imgModify(Request $request, EntityManagerInterface $manager): Response|string
     {
         $imgModify = new UserImgModify();
@@ -261,6 +265,7 @@ final class AccountController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     #[Route('/account/remove-img', name: 'account_delimg')]
+    #[IsGranted("ROLE_USER")]
     public function removeImg(EntityManagerInterface $manager): Response
     {
         /**

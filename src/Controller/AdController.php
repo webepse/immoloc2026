@@ -10,9 +10,11 @@ use App\Repository\AdRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class AdController extends AbstractController
 {
@@ -34,6 +36,12 @@ final class AdController extends AbstractController
     }
 
     #[Route('/ads/{slug}/edit', name:"ads_edit")]
+    #[IsGranted(
+        attribute: new Expression('(user === subject and is_granted("ROLE_USER")) or is_granted("ROLE_ADMIN")'),
+        subject: new Expression('args["ad"].getAuthor()'),
+        message: "Cette annonce ne vous appartient pas, vous ne pouvez pas la modifier"
+
+    )]
     public function edit(Request $request, EntityManagerInterface $manager, Ad $ad): Response
     {
         $form = $this->createForm(AnnonceType::class, $ad);
@@ -66,8 +74,35 @@ final class AdController extends AbstractController
         ]);
     }
 
+    
+    /**
+     * Permet de supprimer une annonce
+    *
+    * @param Ad $ad
+    * @param EntityManagerInterface $manager
+    * @return Response
+    */
+    #[Route("/ads/{slug}/delete", name:"ads_delete")]
+     #[IsGranted(
+        attribute: new Expression('(user === subject and is_granted("ROLE_USER")) or is_granted("ROLE_ADMIN")'),
+        subject: new Expression('args["ad"].getAuthor()'),
+        message: "Cette annonce ne vous appartient pas, vous ne pouvez pas la modifier"
+
+    )]
+    public function delete(Ad $ad, EntityManagerInterface $manager): Response
+    {
+        $this->addFlash(
+            'success',
+            "L'annonce <strong>".$ad->getTitle()."</strong> a bien été supprimée"
+        );
+        $manager->remove($ad);
+        $manager->flush();
+        return $this->redirectToRoute('ads_index');
+    }
+
 
     #[Route('/ads/new', name: 'ads_create')]
+    #[IsGranted("ROLE_USER")]
     public function create(Request $request, EntityManagerInterface $manager): Response
     {
         $ad = new Ad();
@@ -82,7 +117,7 @@ final class AdController extends AbstractController
                 $image->setAd($ad);
                 $manager->persist($image);
             }
-
+            $ad->setAuthor($this->getUser());
             $manager->persist($ad);
             $manager->flush();
             $this->addFlash(
