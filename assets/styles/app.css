@@ -48,3 +48,7 @@
 }
 
 /* commentaire */
+
+.datepicker-cell.disabled{
+    color: firebrick !important;
+}

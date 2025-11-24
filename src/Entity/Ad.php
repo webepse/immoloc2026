@@ -80,6 +80,24 @@ class Ad
             }        
     }
 
+    public function getNotAvailableDays(): ?array
+    {
+        $notAvailableDays = [];
+        foreach($this->bookings as $booking)
+        {
+            // calculer les jours qui se trouvent entre la date d'arrivée et la date de départ
+            // la fonction range() de php permet de créer un tableau qui contient chaque étpae existane entre deux nombre
+            // $result = range(10,20,2)
+            // reponse = [10,12,14,16,18,20]
+            $resultat = range($booking->getStartDate()->getTimestamp(),$booking->getEndDate()->getTimestamp(), 24*60*60);
+            $days = array_map(function($dayTimestamp){
+                return new \DateTime(date('Y-m-d',$dayTimestamp));
+            },$resultat);
+            $notAvailableDays = array_merge($notAvailableDays,$days);
+        }
+        return $notAvailableDays;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

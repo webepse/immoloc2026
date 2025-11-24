@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 class BookingType extends ApplicationType
@@ -18,12 +19,14 @@ class BookingType extends ApplicationType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('startDate', DateType::class, $this->getConfig("Date d'arrivée","La date à laquelle vous comptez arriver"),[
-                "widget" => "single_text"
-            ])
-            ->add('endDate', DateType::class, $this->getConfig("Date de départ du bien","La date à laquelle vous comptez partir du bien réservé"),[
-                "widget" => "single_text"
-            ])
+            // ->add('startDate', DateType::class, $this->getConfig("Date d'arrivée","La date à laquelle vous comptez arriver"),[
+            //     "widget" => "single_text"
+            // ])
+            // ->add('endDate', DateType::class, $this->getConfig("Date de départ du bien","La date à laquelle vous comptez partir du bien réservé"),[
+            //     "widget" => "single_text"
+            // ])
+             ->add('startDate', TextType::class, $this->getConfig("Date d'arrivée","La date à laquelle vous comptez arriver"))
+            ->add('endDate', TextType::class, $this->getConfig("Date de départ du bien","La date à laquelle vous comptez partir du bien réservé"))
             ->add('comment', TextareaType::class, $this->getConfig(false, "Si vous avez un commentaire, n'hésitez pas à en faire part"),[
                 "required" => false
             ])
