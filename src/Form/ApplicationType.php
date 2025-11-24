@@ -13,7 +13,7 @@ class ApplicationType extends AbstractType
      * @param array $options
      * @return array
      */
-    protected function getConfig(string $label, string $placeholder, array $options = []): array
+    protected function getConfig(string|bool $label, string $placeholder, array $options = []): array
     {
         return array_merge_recursive(
             [

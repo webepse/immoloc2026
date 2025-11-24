@@ -7,6 +7,7 @@ use Faker\Factory;
 use App\Entity\User;
 //use Cocur\Slugify\Slugify;
 use App\Entity\Image;
+use App\Entity\Booking;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -94,7 +95,7 @@ class AppFixtures extends Fixture
                 ->setAuthor($user)
             ;
 
-            $manager->persist($ad);
+           
 
             // gestion des images de l'annonce (galerie)
             for($j = 1; $j <= rand(2,5); $j++)
@@ -105,6 +106,33 @@ class AppFixtures extends Fixture
                     ->setCaption($faker->sentence());
                 $manager->persist($image);
             }
+
+            // gestion des réservations
+            for($b = 1; $b <= rand(0,10); $b++)
+            {
+                $booking = new Booking();
+                $createdAt = $faker->dateTimeBetween('-6 months','-4 months');
+                $startDate = $faker->dateTimeBetween('-3 months');
+                $duration = rand(3,10);
+
+                // comme c'est un dateTime
+                $endDate = (clone $startDate)->modify("+".$duration." days");
+                $amount = $ad->getPrice() * $duration;
+                $comment = $faker->paragraph();
+                $booker = $users[rand(0,count($users)-1)];
+
+                $booking->setBooker($booker)
+                    ->setAd($ad)
+                    ->setStartDate($startDate)
+                    ->setEndDate($endDate)
+                    ->setCreatedAt($createdAt)
+                    ->setAmount($amount)
+                    ->setComment($comment)
+                   ;
+                 $manager->persist($booking);
+            }
+            
+             $manager->persist($ad);
 
 
         }
