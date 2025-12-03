@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\AdRepository;
+use App\Entity\User;
+use App\Entity\Comment;
 use Cocur\Slugify\Slugify;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use App\Repository\AdRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: AdRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -103,6 +105,45 @@ class Ad
             $notAvailableDays = array_merge($notAvailableDays,$days);
         }
         return $notAvailableDays;
+    }
+
+    /**
+     * Permet de récup la moyenne des notes sur l'annonce
+     *
+     * @return integer
+     */
+    public function getAvgRatings(): int
+    {
+        // calculer la somme des notations
+        /* array_reduce => permet de réduire le tableau à une seule valeur (attention il faut un tableau pas une array Collection donc on va utiliser toArray()) 1er param tab / 2ème param la fonction pour chaque valeur / 3ème paramètre la valeur par défaut */
+
+        $sum = array_reduce($this->comments->toArray(), function($total, $comment){
+            return $total + $comment->getRating();
+        },0);
+
+        // faire la division pour avoir la moyenne (ex ternaire)
+        if(count($this->comments) > 0) return $moyenne = round($sum / count($this->comments));
+
+        return 0;
+
+    }
+
+    /**
+     * Permet de récupérer le commentaire d'un auteur par rapport à une annonce
+     *
+     * @param User $author
+     * @return Comment|null
+     */
+    public function getCommentFromAuthor(User $author): ?Comment
+    {
+        foreach($this->comments as $comment)
+        {
+            if($comment->getAuthor() === $author)
+            {
+                return $comment;
+            }
+        }
+        return null;
     }
 
     public function getId(): ?int
