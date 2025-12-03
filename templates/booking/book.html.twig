@@ -51,6 +51,15 @@
         ]
     })
 
+    /* datesDisabled: [
+        "01/12/2025",
+        "02/12/2025",
+        "03/12/2025",
+        ...
+    ]
+    */
+
+
     const datePickerEnd = new Datepicker(booking_endDate,{
         format: "dd/mm/yyyy",
         minDate: new Date(),
@@ -59,6 +68,50 @@
                 "{{day.format('d/m/Y')}}",
             {% endfor %}
         ]
+    })
+
+    const calculateAmount = () => {
+        let bookingStartDate = document.querySelector("#booking_startDate")
+        let bookingEndDate = document.querySelector("#booking_endDate")
+
+        //console.log(bookingEndDate.value)
+        // résultat: 13/12/2025
+        // new Date("13/12/2025") => false
+        // new Date("2025-12-13") => true
+
+        // regex Group
+        // "(13)/(12)/(2025) => $1-$2-$3 => $3-$2-$1
+        // regex number \d => [0-9]
+        // bookingEndDate.value.replace(regex, retour)
+        // regex délimiteur /
+        // /(\d+)/ => il faut éjecter le /
+        // /(\d+)\/(\d+)\/(\d{4})
+        //console.log(bookingEndDate.value.replace(/(\d+)\/(\d+)\/(\d{4})/,"$3-$2-$1"))
+        
+
+        const endDate = new Date(bookingEndDate.value.replace(/(\d+)\/(\d+)\/(\d{4})/,"$3-$2-$1"))
+        const startDate = new Date(bookingStartDate.value.replace(/(\d+)\/(\d+)\/(\d{4})/,"$3-$2-$1"))
+
+        console.log(endDate, startDate)
+
+        if(startDate && endDate && startDate < endDate)
+        {
+            const interval = endDate.getTime() - startDate.getTime()
+            const days = interval / (24*60*60*1000)
+            const amount = days * {{ad.price}}
+            const myDays = document.querySelector("#days")
+            const myAmount = document.querySelector("#amount")
+            myDays.innerHTML = days
+            myAmount.innerHTML = amount.toLocaleString('fr-FR')
+        }
+    }
+
+    bookingStartDate.addEventListener('changeDate',()=>{
+        calculateAmount()
+    })
+
+    bookingEndDate.addEventListener('changeDate',()=>{
+         calculateAmount()
     })
 </script>
 
