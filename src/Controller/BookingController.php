@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -69,7 +70,12 @@ final class BookingController extends AbstractController
      * @return Response
      */
     #[Route("/bookings/{id}", name:"booking_show")]
-    #[IsGranted("ROLE_USER")]
+    #[IsGranted(
+        attribute: new Expression('(user === subject and is_granted("ROLE_USER")) or is_granted("ROLE_ADMIN")'),
+        subject: new Expression('args["booking"].getBooker()'),
+        message: "Cette réservation ne vous appartient pas, vous ne pouvez pas la voir"
+
+    )]
     public function show(Booking $booking, Request $request, EntityManagerInterface $manager): Response
     {
         $comment = new Comment();
