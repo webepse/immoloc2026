@@ -54,4 +54,21 @@ final class BookingController extends AbstractController
             'ad' => $ad
         ]);
     }
+
+    /**
+     * Permet d'afficher les informations de la réservation ainsi que la possibilité de commenter la réservation
+     *
+     * @param Booking $booking
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
+    #[Route("/bookings/{id}", name:"booking_show")]
+    #[IsGranted("ROLE_USER")]
+    public function show(Booking $booking, Request $request, EntityManagerInterface $manager): Response
+    {
+        return $this->render("booking/show.html.twig",[
+            'booking' => $booking
+        ]);
+    }
 }
