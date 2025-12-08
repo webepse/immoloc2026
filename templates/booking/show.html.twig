@@ -55,6 +55,10 @@
                             <strong>Note: </strong>{% include "partials/_rating.html.twig" with {'rating': comment.rating} %}
                             {% else %}
                                 {# formulaire #}
+                                {{form_start(myForm)}}
+                                {{form_widget(myForm)}}
+                                    <button type="submit" class="btn btn-success">Confirmer</button>
+                                {{form_end(myForm)}}
                         {% endif %}
                     {% else %}
                         <p>Vous ne pourrez pas noter cette annonce tant que votre voyage ne sera pas complet</p>    
